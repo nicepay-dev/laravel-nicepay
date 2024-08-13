@@ -4,6 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 use App\Http\Controllers\api\va\GenerateVirtualAccountController;
 use App\Http\Controllers\api\va\DeleteVirtualAccountController;
+use App\Http\Controllers\api\ewallet\GenerateEwalletController;
+use App\Http\Controllers\api\ewallet\InquiryEwalletController;
+use App\Http\Controllers\api\ewallet\RefundEwalletController;
+use App\Http\Controllers\api\qris\GenerateQrisController;
+use App\Http\Controllers\api\qris\InquiryQrisController;
+use App\Http\Controllers\api\qris\RefundQrisController;
+
+use App\Http\Controllers\api\payout\GeneratePayoutController;
+use App\Http\Controllers\api\payout\ApprovePayoutController;
+use App\Http\Controllers\api\payout\InquiryBalancePayoutController;
+use App\Http\Controllers\api\payout\InquiryPayoutController;
+use App\Http\Controllers\api\payout\RejectPayoutController;
+use App\Http\Controllers\api\payout\CancelPayoutController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,43 +34,34 @@ Route::get('/', function () {
     return view('template.index');
 });
 
-
+//Generate token
 Route::get('/generate-access-token', [GenerateAccessTokenController::class, 'generateAccessToken']);
 
-Route::get('/generate-virtual-account', [GenerateVirtualAccountController::class, 'generateVirtualAccount']);
 
+//VA
+Route::get('/generate-virtual-account', [GenerateVirtualAccountController::class, 'generateVirtualAccount']);
 Route::get('/delete-virtual-account', [DeleteVirtualAccountController::class, 'deleteVirtualAccount']);
 
 
-Route::prefix('v1.0')->group(function() {
-    Route::get('/access-token', 'api\accessToken\GenerateAccessTokenController@generateAccessToken');
-});
-Route::prefix('api/v1.0')->group(function() {
-    // va
-    Route::get('/transfer-va/create-va', 'api\va\GenerateVirtualAccountController@generateVirtualAccount');
-    Route::get('/transfer-va/delete-va', 'api\va\DeleteVirtualAccountController@deleteVirtualAccount');
 
-    // qris
-    Route::prefix('/qr')->group(function() {
-        Route::get('/qr-mpm-generate', 'api\qris\GenerateQrisController@generateQris');
-        Route::get('/qr-mpm-query', 'api\qris\GenerateQrisController@inquiryQris');
-        Route::get('/qr-mpm-refund', 'api\qris\GenerateQrisController@refundQris');
-    });
+//E-Wallet
+Route::get('/payment-host-to-host', [GenerateEwalletController::class, 'generateEwallet']);
+Route::get('/status-ewallet', [InquiryEwalletController::class, 'inquiryEwallet']);
+Route::get('/refund-ewallet', [RefundEwalletController::class, 'refundEwallet']);
 
-    // ewallet
-    Route::prefix('/debit')->group(function() {
-        Route::get('/payment-host-to-host', 'api\ewallet\GenerateEwalletController@generateEwallet');
-        Route::get('/status', 'api\ewallet\GenerateEwalletController@inquiryEwallet');
-        Route::get('/refund', 'api\ewallet\GenerateEwalletController@refundEwallet');
-    });
 
-    // payout
-    Route::prefix('/transfer')->group(function() {
-        Route::get('/registration', 'api\payout\GeneratePayoutController@generatePayout');
-        Route::get('/approve', 'api\payout\GeneratePayoutController@approvePayout');
-        Route::get('/inquiry', 'api\payout\GeneratePayoutController@inquiryPayout');
-        Route::get('/balance-inquiry', 'api\payout\GeneratePayoutController@balanceInquiryPayout');
-        Route::get('/cancel', 'api\payout\GeneratePayoutController@cancelPayout');
-        Route::get('/reject', 'api\payout\GeneratePayoutController@rejectPayout');
-    });
-});
+//QRIS
+Route::get('/generate-qr', [GenerateQrisController::class, 'generateQris']);
+Route::get('/status-qr', [InquiryQrisController::class, 'inquiryQris']);
+Route::get('/refund-qr', [RefundQrisController::class, 'refundQris']);
+
+
+//Payout
+Route::get('/registration-payout', [GeneratePayoutController::class, 'generatePayout']);
+Route::get('/approve-payout', [ApprovePayoutController::class, 'approvePayout']);
+Route::get('/cancel-payout', [CancelPayoutController::class, 'cancelPayout']);
+Route::get('/inquiry-balance-payout', [InquiryBalancePayoutController::class, 'inquiryBalancePayout']);
+Route::get('/inquiry-payout', [InquiryPayoutController::class, 'inquiryPayout']);
+Route::get('/reject-payout', [RejectPayoutController::class, 'rejectPayout']);
+
+

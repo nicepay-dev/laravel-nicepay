@@ -9,17 +9,17 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
-class GenerateQrisController extends Controller
-{
+class InquiryQrisController extends Controller{
+
     protected $partner_id = "";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
-    protected $end_point_generate = "/api/v1.0/qr/qr-mpm-generate";
+    protected $end_point_inquiry = "/api/v1.0/qr/qr-mpm-query";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
     "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string credential
-    PROTECTED $access_token = "";
+    PROTECTED $client_secret = "1af9014925cab04606b2e77a7536cb0d5c51353924a966e503953e010234108a"; // string credential
+    PROTECTED $access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUTklDRVFSMDgxIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJOSUNFUEFZIiwiZXhwIjoiMjAyNC0wOC0xMlQwODo0MjowNVoifQ==.Ks_CPBMEsI_9eHOhlJTkCItnXfVxy-QPO-hKvwnrdk8=";
     PROTECTED $store_id = "NICEPAY";
 
     // for amount
@@ -41,75 +41,41 @@ class GenerateQrisController extends Controller
     }
 
     /**
-     * generate transaction qris
+     * inquiry transaction qris
+     * for check status transaction
      * 
      * @return json
      */
-    public function generateQris()
+    public function inquiryQris()
     {
         $helper = new Helpers();
-
         $http_method = "POST";
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-        $validity_period = $date->addMinutes("5")->addSeconds("30")->toIso8601String();
-
-
         $partner_id = $this->partner_id; //merchantId
         $client_secret = $this->client_secret;
         $access_token = $this->access_token;
         $store_id = $this->store_id;
-        $result = array();
 
         $external_id = "MrQrTst" . $time_stamp . Str::random(5);
-        $reference_no = "refNoQr" . $time_stamp . Str::random(5);
-
-        $totalAmount = [
-            "value" => $this->amt,
-            "currency" => "IDR"
-        ];     
-
-        $cartData = [
-            "count" => "1",
-            "item" => [
-                "img_url" => "https://d3nevzfk7ii3be.cloudfront.net/igi/vOrGHXlovukA566A.medium",
-                "goods_name" => "Nokia 3360",
-                "goods_detail" => "Old Nokia 3360",
-                "goods_amount" => $this->amt,
-                "goods_quantity" => "1"
-            ]
-        ];
+        $original_reference_no = "TNICEQR08108202408121527382996";
+        $reference_no = "refNoQr20240812152742rhfmL";
         
-        $additionalInfo = [
-            "goodsNm" => "QRIS",
-            "billingNm" => "QRIS",
-            "billingPhone" => "08123456789",
-            "billingEmail" => "email@qris.com",
-            "billingCity" => "Jakarta Selatan",
-            "billingState" => "Jakarta",
-            "billingPostCd" => "12870",
-            "billingCountry" => "Indonesia",
-            "dbProcessUrl" => "https://ptsv2.com/t/jhon/post",
-            "callBackUrl"=> "https://ptsv2.com/t/jhon/post",
-            "userIP" => "127.0.0.1",
-            "cartData" => json_encode($cartData),
-            "mitraCd" => "QSHP"
-        ];
+        $additionalInfo = new \stdClass();
 
         $body = [
-            "partnerReferenceNo" => $reference_no,
-            "amount" => $totalAmount,
+            "originalReferenceNo" => $original_reference_no,
+            "originalPartnerReferenceNo" => $reference_no,
             "merchantId" => $partner_id,
-            "storeId" => $store_id,
-            // "validityPeriod" => "", //optional, if not used, will set default setting from nicepay 5 minutes
-            "validityPeriod" => $validity_period, //optional, if not used, will set default setting from nicepay 5 
+            "externalStoreId" => $store_id,
+            "serviceCode" => "51",
             "additionalInfo" => $additionalInfo
         ];
 
         $string_to_sign = $helper->generateStringToSign(
                 $http_method, 
-                $this->end_point_generate, 
+                $this->end_point_inquiry, 
                 $access_token, 
                 $body, 
                 $x_time_stamp
@@ -137,23 +103,7 @@ class GenerateQrisController extends Controller
         print_r($body);
 
         try {
-            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
-
-            
-            $obj_response = $response->object();
-
-            // dd($obj_response);
-
-            
-            $result = [
-                "responseCode" => $obj_response->responseCode,
-                "responseMessage" => $obj_response->responseMessage,
-                "referenceNo" => $obj_response->referenceNo,
-                "partnerReferenceNo" => $obj_response->partnerReferenceNo,
-                "validityPeriod" => $obj_response->additionalInfo->validityPeriod,
-                "qrUrl" => $obj_response->qrUrl
-            ];
-
+            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_inquiry, $body);
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -168,7 +118,10 @@ class GenerateQrisController extends Controller
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $result
+            'data' => $response->object()
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
     }
+
 }
+
+?>

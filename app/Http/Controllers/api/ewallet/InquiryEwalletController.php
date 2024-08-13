@@ -9,11 +9,12 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
-class GenerateEwalletController extends Controller
+class InquiryEwalletController extends Controller
 {
+
     protected $partner_id = "";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
-    protected $end_point_generate = "/api/v1.0/debit/payment-host-to-host";
+    protected $end_point_inquiry = "/api/v1.0/debit/status";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
@@ -41,105 +42,48 @@ class GenerateEwalletController extends Controller
     }
 
     /**
-     * generate transaction using ewallet
+     * inquiry transaction ewallet
+     * check transaction status
      * 
      * @return json
      */
-    public function generateEwallet()
+    public function inquiryEwallet()
     {
         $helper = new Helpers();
-
         $http_method = "POST";
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-        $validity_period = $date->addMinutes("5")->addSeconds("30")->toIso8601String();
-
         $partner_id = $this->partner_id; //merchantId
         $client_secret = $this->client_secret;
         $access_token = $this->access_token;
         $store_id = $this->store_id;
 
         $external_id = "MrEwTst" . $time_stamp . Str::random(5);
-        $reference_no = "refNoEw" . $time_stamp . Str::random(5);
-
+        $original_reference_no = "TNICEEW05105202408081348437590";
+        $reference_no = "refNoEw20240808134839IXL1X";
         
-        $items = array();
-        
-        $itemA = [
-            "img_url" => "https://d3nevzfk7ii3be.cloudfront.net/igi/vOrGHXlovukA566A.medium",
-            "goods_name" => "Nokia 3360",
-            "goods_detail" => "Old Nokia 3360",
-            "goods_amt" => "10.00",
-            "goods_quantity" => "1"
-        ];
-        array_push($items, $itemA);
-        $itemB = [
-            "img_url" => "https://d3nevzfk7ii3be.cloudfront.net/igi/vOrGHXlovukA566A.medium",
-            "goods_name" => "Nokia 3360",
-            "goods_detail" => "Old Nokia 3360",
-            "goods_amt" => "1.00",
-            "goods_quantity" => "1"
-        ];
-        array_push($items, $itemB);
-        $countAmt = 0;
-        $countItm = 0;
-        foreach ($items as $itm) {
-            $amt = $itm["goods_amt"];
-            str_replace(".00", "", $amt);
-
-            $countAmt += (int) $itm["goods_quantity"] * (int) $amt;
-            $countItm++;
-        }
-        
-        $cartData = [
-            "count" => "$countItm",
-            "item" => $items
-        ];
-        
-        $totalAmount = [
-            "value" => $countAmt . ".00",
+        $amount = [
+            "value" => "11.00",
             "currency" => "IDR"
-        ]; 
-            
-        $additionalInfo = [
-            "mitraCd" => "OVOE",
-            "goodsNm" => "Merchant Goods 1",
-            "billingNm" => "SNAP Ewallet",
-            "billingPhone" => "08123456789",
-            "dbProcessUrl" => "https://ptsv2.com/t/jhon/post",
-            "callBackUrl"=> "https://ptsv2.com/t/jhon/post",
-            "cartData" => json_encode($cartData)
         ];
-
-        $urlParam = array();
-        $paramNotify = [
-            "url" => "https://ptsv2.com/t/jhon/post",
-            "type" => "PAY_NOTIFY",
-            "isDeeplink" => "Y"
-        ];
-        array_push($urlParam, $paramNotify);
-        $paramReturn = [
-            "url" => "https://ptsv2.com/t/jhon/post",
-            "type" => "PAY_RETURN",
-            "isDeeplink" => "Y"
-        ];
-        array_push($urlParam, $paramReturn);
+        $additionalInfo = new \stdClass();
 
         $body = [
-            "partnerReferenceNo" => $reference_no,
             "merchantId" => $partner_id,
             "subMerchantId" => $partner_id,
-            "amount" => $totalAmount,
-            "urlParam"=> $urlParam,
+            "originalPartnerReferenceNo" => $reference_no,
+            "originalReferenceNo" => $original_reference_no,
+            "serviceCode" => "54",
+            "transactionDate" => $x_time_stamp,
             "externalStoreId" => $store_id,
-            "validUpTo" => $validity_period,
+            "amount" => $amount,
             "additionalInfo" => $additionalInfo
         ];
 
         $string_to_sign = $helper->generateStringToSign(
                 $http_method, 
-                $this->end_point_generate, 
+                $this->end_point_inquiry, 
                 $access_token, 
                 $body, 
                 $x_time_stamp
@@ -163,16 +107,11 @@ class GenerateEwalletController extends Controller
         
         print_r("\r\n");
         
-        print_r(json_encode($header));
-        print_r("\r\n");
-        print_r(json_encode($body));
-        print_r("\r\n");
+        print_r($header);
+        print_r($body);
 
         try {
-            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
-
-            
-            $obj_response = $response->object();
+            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_inquiry, $body);
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -189,6 +128,9 @@ class GenerateEwalletController extends Controller
             'message' => $response->successful(),
             'data' => $response->object()
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
+        
     }
 
 }
+
+?>

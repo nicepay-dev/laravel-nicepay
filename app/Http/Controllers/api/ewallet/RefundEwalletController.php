@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\payout;
+namespace App\Http\Controllers\api\ewallet;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -9,18 +9,20 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
-class GeneratePayoutController extends Controller
+
+class RefundEwalletController extends Controller
 {
-    protected $partner_id = "IONPAYTEST";
+
+    protected $partner_id = "TNICEEW051";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
-    protected $end_point_generate = "/api/v1.0/transfer/registration";
+    protected $end_point_refund = "/api/v1.0/debit/refund";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
     "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string credential
-    PROTECTED $access_token = ""; // String access token
-    PROTECTED $store_id = "";
+    PROTECTED $client_secret = ""; // string client secret
+    PROTECTED $access_token = ""; // string access token
+    PROTECTED $store_id = "249668074512960";
 
     // for amount
     PROTECTED $amt = "100.00";
@@ -41,11 +43,11 @@ class GeneratePayoutController extends Controller
     }
 
     /**
-     * generate payout
+     * refund transaction ewallet
      * 
      * @return json
      */
-    public function generatePayout()
+    public function refundEwallet()
     {
         $helper = new Helpers();
 
@@ -53,50 +55,40 @@ class GeneratePayoutController extends Controller
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-
         $partner_id = $this->partner_id; //merchantId
         $client_secret = $this->client_secret;
         $access_token = $this->access_token;
+        $store_id = $this->store_id;
 
-        $external_id = "MrQrTst" . $time_stamp . Str::random(5);
-        $reference_no = "refNoQr" . $time_stamp . Str::random(5);
-
-        $totalAmount = [
-            "value" => $this->amt,
+        $external_id = "MrEwTst" . $time_stamp . Str::random(5);
+        $original_reference_no = "TNICEEW05105202408081348437590";
+        $reference_no = "refNoEw20240808134839IXL1X";
+        $partner_refund_no = "refndNoEw" . $time_stamp . Str::random(5);
+        
+        $refundAmount = [
+            "value" => "11.00",
             "currency" => "IDR"
-        ];     
+        ]; 
+
+        $additionalInfo = [
+            "refundType" => $this->cancel_type
+        ];
 
         $body = [
             "merchantId" => $partner_id,
-            "msId" => "",
-            "beneficiaryAccountNo" => "",
-            "beneficiaryName" => "Laravel Test",
-            "beneficiaryPhone" => "08123456789",
-            "beneficiaryCustomerResidence" => "1",
-            "beneficiaryCustomerType" => "1",
-            "beneficiaryPostalCode" => "123456",
-            "payoutMethod" => "2",
-            "beneficiaryBankCode" => "",
-            "amount" => $totalAmount,
-            "partnerReferenceNo" => $reference_no,
-            "reservedDt" => "",
-            "reservedTm" => "",
-            "description" => "SNAP Payout from Laravel",
-            "deliveryName" => "Laravel",
-            "deliveryId" => "",
-            "beneficiaryPOE" => "",
-            "beneficiaryDOE" => "",
-            "beneficiaryCoNo" => "",
-            "beneficiaryAddress" => "",
-            "beneficiaryAuthPhoneNumber" => "",
-            "beneficiaryMerCategory" => "",
-            "beneficiaryCoMgmtName" => "",
-            "beneficiaryCoShName" => ""
+            "subMerchantId" => $partner_id,
+            "originalReferenceNo" => $original_reference_no,
+            "originalPartnerReferenceNo" => $reference_no,
+            "partnerRefundNo" => $partner_refund_no,
+            "refundAmount" => $refundAmount,
+            "externalStoreId" => $store_id,
+            "reason" => "Hit refund from plugin laravel",
+            "additionalInfo" => $additionalInfo
         ];
 
         $string_to_sign = $helper->generateStringToSign(
                 $http_method, 
-                $this->end_point_generate, 
+                $this->end_point_refund, 
                 $access_token, 
                 $body, 
                 $x_time_stamp
@@ -124,11 +116,7 @@ class GeneratePayoutController extends Controller
         print_r($body);
 
         try {
-            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
-
-            
-            $obj_response = $response->object();
-
+            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_refund, $body);
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -143,7 +131,10 @@ class GeneratePayoutController extends Controller
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $obj_response
+            'data' => $response->object()
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
-    }
+    }    
+
 }
+
+?>

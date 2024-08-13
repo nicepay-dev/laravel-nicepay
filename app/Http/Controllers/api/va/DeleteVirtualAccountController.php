@@ -14,16 +14,16 @@ use Illuminate\Http\Response;
 class DeleteVirtualAccountController extends Controller
 {
 
-    protected $client_id = "TNICEVA023";
+    protected $client_id = "";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point = "/api/v1.0/transfer-va/delete-va";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAInJe1G22R2fMchIE6BjtYRqyMj6lurP/zq6vy79WaiGKt0Fxs4q3Ab4ifmOXd97ynS5f0JRfIqakXDcV/e2rx9bFdsS2HORY7o5At7D5E3tkyNM9smI/7dk8d3O0fyeZyrmPMySghzgkR3oMEDW1TCD5q63Hh/oq0LKZ/4Jjcb9AgMBAAECgYA4Boz2NPsjaE+9uFECrohoR2NNFVe4Msr8/mIuoSWLuMJFDMxBmHvO+dBggNr6vEMeIy7zsF6LnT32PiImv0mFRY5fRD5iLAAlIdh8ux9NXDIHgyera/PW4nyMaz2uC67MRm7uhCTKfDAJK7LXqrNVDlIBFdweH5uzmrPBn77foQJBAMPCnCzR9vIfqbk7gQaA0hVnXL3qBQPMmHaeIk0BMAfXTVq37PUfryo+80XXgEP1mN/e7f10GDUPFiVw6Wfwz38CQQC0L+xoxraftGnwFcVN1cK/MwqGS+DYNXnddo7Hu3+RShUjCz5E5NzVWH5yHu0E0Zt3sdYD2t7u7HSr9wn96OeDAkEApzB6eb0JD1kDd3PeilNTGXyhtIE9rzT5sbT0zpeJEelL44LaGa/pxkblNm0K2v/ShMC8uY6Bbi9oVqnMbj04uQJAJDIgTmfkla5bPZRR/zG6nkf1jEa/0w7i/R7szaiXlqsIFfMTPimvRtgxBmG6ASbOETxTHpEgCWTMhyLoCe54WwJATmPDSXk4APUQNvX5rr5OSfGWEOo67cKBvp5Wst+tpvc6AbIJeiRFlKF4fXYTb6HtiuulgwQNePuvlzlt2Q8hqQ==" . // string private key
+    "" . // string private key
     "\r\n" .
     "-----END RSA PRIVATE KEY-----";
     
-    PROTECTED $client_secret = "1af9014925cab04606b2e77a7536cb0d5c51353924a966e503953e010234108a"; // string CLIENT SECRET
-    PROTECTED $access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUTklDRVZBMDIzIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJCTklOIiwiZXhwIjoiMjAyNC0wOC0wNVQwMToyODoyMVoifQ==.S3Pr2LsPU-eGFvKo2ZxiHKfO2ka9zYRxrHY8ulxi8sM=";
+    PROTECTED $client_secret = ""; // string CLIENT SECRET
+    PROTECTED $access_token = "";
 
     /**
      * Create a new controller instance.

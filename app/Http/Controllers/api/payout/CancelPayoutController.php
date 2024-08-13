@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\api\payout;
 
 use App\Http\Controllers\Controller;
@@ -9,11 +8,13 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
-class GeneratePayoutController extends Controller
+
+class CancelPayoutController extends Controller
 {
+
     protected $partner_id = "IONPAYTEST";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
-    protected $end_point_generate = "/api/v1.0/transfer/registration";
+    protected $end_point_cancel = "/api/v1.0/transfer/cancel";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
@@ -41,11 +42,11 @@ class GeneratePayoutController extends Controller
     }
 
     /**
-     * generate payout
-     * 
+     * cancel payout transaction
+     *
      * @return json
      */
-    public function generatePayout()
+    public function cancelPayout()
     {
         $helper = new Helpers();
 
@@ -59,44 +60,18 @@ class GeneratePayoutController extends Controller
         $access_token = $this->access_token;
 
         $external_id = "MrQrTst" . $time_stamp . Str::random(5);
-        $reference_no = "refNoQr" . $time_stamp . Str::random(5);
-
-        $totalAmount = [
-            "value" => $this->amt,
-            "currency" => "IDR"
-        ];     
+        $reference_no = "originalPartnerReferenceNo";
+        $txid = "originalReferenceNo";
 
         $body = [
-            "merchantId" => $partner_id,
-            "msId" => "",
-            "beneficiaryAccountNo" => "",
-            "beneficiaryName" => "Laravel Test",
-            "beneficiaryPhone" => "08123456789",
-            "beneficiaryCustomerResidence" => "1",
-            "beneficiaryCustomerType" => "1",
-            "beneficiaryPostalCode" => "123456",
-            "payoutMethod" => "2",
-            "beneficiaryBankCode" => "",
-            "amount" => $totalAmount,
-            "partnerReferenceNo" => $reference_no,
-            "reservedDt" => "",
-            "reservedTm" => "",
-            "description" => "SNAP Payout from Laravel",
-            "deliveryName" => "Laravel",
-            "deliveryId" => "",
-            "beneficiaryPOE" => "",
-            "beneficiaryDOE" => "",
-            "beneficiaryCoNo" => "",
-            "beneficiaryAddress" => "",
-            "beneficiaryAuthPhoneNumber" => "",
-            "beneficiaryMerCategory" => "",
-            "beneficiaryCoMgmtName" => "",
-            "beneficiaryCoShName" => ""
+            "originalPartnerReferenceNo" => $reference_no,
+            "originalReferenceNo" => $txid,
+            "merchantId" => $partner_id
         ];
 
         $string_to_sign = $helper->generateStringToSign(
                 $http_method, 
-                $this->end_point_generate, 
+                $this->end_point_cancel, 
                 $access_token, 
                 $body, 
                 $x_time_stamp
@@ -124,7 +99,7 @@ class GeneratePayoutController extends Controller
         print_r($body);
 
         try {
-            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
+            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_cancel, $body);
 
             
             $obj_response = $response->object();
@@ -146,4 +121,7 @@ class GeneratePayoutController extends Controller
             'data' => $obj_response
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
     }
+    
 }
+
+?>

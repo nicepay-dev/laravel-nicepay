@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\api\payout;
 
 use App\Http\Controllers\Controller;
@@ -9,11 +8,12 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
-class GeneratePayoutController extends Controller
+class InquiryPayoutController extends Controller
 {
+
     protected $partner_id = "IONPAYTEST";
     protected $domain = "https://dev.nicepay.co.id/nicepay";
-    protected $end_point_generate = "/api/v1.0/transfer/registration";
+    protected $end_point_inquiry = "/api/v1.0/transfer/inquiry";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
@@ -41,62 +41,37 @@ class GeneratePayoutController extends Controller
     }
 
     /**
-     * generate payout
+     * inquiry payout transaction
+     * check transaction status
      * 
      * @return json
      */
-    public function generatePayout()
+    public function inquiryPayout()
     {
         $helper = new Helpers();
-
         $http_method = "POST";
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-
         $partner_id = $this->partner_id; //merchantId
         $client_secret = $this->client_secret;
         $access_token = $this->access_token;
 
         $external_id = "MrQrTst" . $time_stamp . Str::random(5);
-        $reference_no = "refNoQr" . $time_stamp . Str::random(5);
-
-        $totalAmount = [
-            "value" => $this->amt,
-            "currency" => "IDR"
-        ];     
+        $original_reference_no = "originalReferenceNo";
+        $reference_no = "originalPartnerReferenceNo";
+        $beneficiaryAccountNo = "5345000060";
 
         $body = [
             "merchantId" => $partner_id,
-            "msId" => "",
-            "beneficiaryAccountNo" => "",
-            "beneficiaryName" => "Laravel Test",
-            "beneficiaryPhone" => "08123456789",
-            "beneficiaryCustomerResidence" => "1",
-            "beneficiaryCustomerType" => "1",
-            "beneficiaryPostalCode" => "123456",
-            "payoutMethod" => "2",
-            "beneficiaryBankCode" => "",
-            "amount" => $totalAmount,
-            "partnerReferenceNo" => $reference_no,
-            "reservedDt" => "",
-            "reservedTm" => "",
-            "description" => "SNAP Payout from Laravel",
-            "deliveryName" => "Laravel",
-            "deliveryId" => "",
-            "beneficiaryPOE" => "",
-            "beneficiaryDOE" => "",
-            "beneficiaryCoNo" => "",
-            "beneficiaryAddress" => "",
-            "beneficiaryAuthPhoneNumber" => "",
-            "beneficiaryMerCategory" => "",
-            "beneficiaryCoMgmtName" => "",
-            "beneficiaryCoShName" => ""
+            "originalReferenceNo" => $original_reference_no,
+            "originalPartnerReferenceNo" => $reference_no,
+            "beneficiaryAccountNo" => $beneficiaryAccountNo
         ];
 
         $string_to_sign = $helper->generateStringToSign(
                 $http_method, 
-                $this->end_point_generate, 
+                $this->end_point_inquiry, 
                 $access_token, 
                 $body, 
                 $x_time_stamp
@@ -124,11 +99,7 @@ class GeneratePayoutController extends Controller
         print_r($body);
 
         try {
-            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
-
-            
-            $obj_response = $response->object();
-
+            $response = Http::withHeaders($header)->post($this->domain . $this->end_point_inquiry, $body);
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -143,7 +114,10 @@ class GeneratePayoutController extends Controller
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $obj_response
+            'data' => $response->object()
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
     }
+    
 }
+
+?>
