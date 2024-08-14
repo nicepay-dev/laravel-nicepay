@@ -42,17 +42,6 @@ class GenerateVirtualAccountController extends Controller
      */
     public function generateVirtualAccount()
     {
-        // TODO
-        /**
-         * 1. get data dari ui
-         * 2. validasi data
-         * 3. update request body sesuai kebutuhan & data yang didapat dari ui
-         * 4. generate header, body, dll sesuai spec nicepay
-         * 5. hit nicepay
-         * 6. balikkan data ke UI
-         * 7. di halaman UI, tampilkan response
-         * 
-         */
 
         $helper = new Helpers();
         $http_method = "POST";
@@ -60,7 +49,6 @@ class GenerateVirtualAccountController extends Controller
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
         $partner_id = "TNICEVA023";
-        // $client_secret = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJT05QQVlURVNUIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJCQkJBIiwiZXhwIjoiMjAyMy0wMi0wMlQwNjoyNDozNFoifQ==.J7hVhOxwF7fQN_cxM9f9I_lOAxQ8-qq0xuExQobkLrc=";
         $client_secret = $this->client_secret;
 
         $access_token = $this->access_token;
