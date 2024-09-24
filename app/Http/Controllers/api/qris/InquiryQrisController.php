@@ -18,8 +18,8 @@ class InquiryQrisController extends Controller{
     "" . // string private key
     "\r\n" .
     "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = "1af9014925cab04606b2e77a7536cb0d5c51353924a966e503953e010234108a"; // string credential
-    PROTECTED $access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUTklDRVFSMDgxIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJOSUNFUEFZIiwiZXhwIjoiMjAyNC0wOC0xMlQwODo0MjowNVoifQ==.Ks_CPBMEsI_9eHOhlJTkCItnXfVxy-QPO-hKvwnrdk8=";
+    PROTECTED $client_secret = ""; // string credential
+    PROTECTED $access_token = "";
     PROTECTED $store_id = "NICEPAY";
 
     // for amount

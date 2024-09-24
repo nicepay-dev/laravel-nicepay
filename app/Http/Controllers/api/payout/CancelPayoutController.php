@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class CancelPayoutController extends Controller
 {
 
-    protected $partner_id = "IONPAYTEST";
+    protected $partner_id = ""; //String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_cancel = "/api/v1.0/transfer/cancel";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .

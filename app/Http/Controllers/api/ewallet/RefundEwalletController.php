@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class RefundEwalletController extends Controller
 {
 
-    protected $partner_id = "TNICEEW051";
+    protected $partner_id = ""; // String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_refund = "/api/v1.0/debit/refund";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .

@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class InquiryBalancePayoutController extends Controller
 {
 
-    protected $partner_id = "IONPAYTEST";
+    protected $partner_id = ""; //String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_balance_inquiry = "/api/v1.0/transfer/balance-inquiry";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .

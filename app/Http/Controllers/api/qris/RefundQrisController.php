@@ -11,16 +11,16 @@ use Carbon\Carbon;
 
 class RefundQrisController extends Controller{
 
-    protected $partner_id = "TNICEQR081";
+    protected $partner_id = ""; //String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_refund = "/api/v1.0/qr/qr-mpm-refund";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
     "" . // string private key
     "\r\n" .
     "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = "1af9014925cab04606b2e77a7536cb0d5c51353924a966e503953e010234108a"; // string credential
-    PROTECTED $access_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUTklDRVFSMDgxIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJOSUNFUEFZIiwiZXhwIjoiMjAyNC0wOC0xMlQwODo0MjowNVoifQ==.Ks_CPBMEsI_9eHOhlJTkCItnXfVxy-QPO-hKvwnrdk8=";
-    PROTECTED $store_id = "NICEPAY";
+    PROTECTED $client_secret = ""; // string credential
+    PROTECTED $access_token = "";
+    PROTECTED $store_id = "";
 
     // for amount
     PROTECTED $amt = "100.00";

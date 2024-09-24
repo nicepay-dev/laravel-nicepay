@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class GeneratePayoutController extends Controller
 {
-    protected $partner_id = "IONPAYTEST";
+    protected $partner_id = ""; //String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_generate = "/api/v1.0/transfer/registration";
     PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .

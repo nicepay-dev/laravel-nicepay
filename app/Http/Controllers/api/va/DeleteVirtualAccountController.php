@@ -49,8 +49,7 @@ class DeleteVirtualAccountController extends Controller
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-        $partner_id = "TNICEVA023";
-        // $client_secret = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJJT05QQVlURVNUIiwiaXNzIjoiTklDRVBBWSIsIm5hbWUiOiJCQkJBIiwiZXhwIjoiMjAyMy0wMi0wMlQwNjoyNDozNFoifQ==.J7hVhOxwF7fQN_cxM9f9I_lOAxQ8-qq0xuExQobkLrc=";
+        $partner_id = ""; //String partner id / merchantId
         $client_secret = $this->client_secret;
 
         $access_token = $this->access_token;
