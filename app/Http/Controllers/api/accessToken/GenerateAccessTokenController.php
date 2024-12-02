@@ -4,18 +4,15 @@ namespace App\Http\Controllers\api\accessToken;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
 
 class GenerateAccessTokenController extends Controller
 {
-    protected $client_id = ""; 
-    protected $base_url = "https://dev.nicepay.co.id/nicepay/v1.0/access-token/b2b";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
+    protected $client_id;
+    protected $base_url;
+    protected $key;
+    protected $client_secret;
 
     /**
      * Create a new controller instance.
@@ -24,11 +21,15 @@ class GenerateAccessTokenController extends Controller
      */
     public function __construct()
     {
+        $this->client_id = env('CLIENT_ID', 'default_client_id'); // Default value for safety
+        $this->base_url = env('BASE_URL', 'https://dev.nicepay.co.id/nicepay/v1.0/access-token/b2b'); // Default base URL
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->client_secret = env('CLIENT_SECRET');
     }
 
     /**
-     * generate access token
-     * 
+     * Generate access token
+     *
      * @return json
      */
     public function generateAccessToken()
@@ -45,33 +46,33 @@ class GenerateAccessTokenController extends Controller
         ];
 
         $string_to_sign = $client_id . "|" . $x_time_stamp;
-        print_r($string_to_sign);
-        print_r("\r\n");
 
         $signature = $helper->generateSignature($string_to_sign, $this->key, OPENSSL_ALGO_SHA256);
-        print_r($signature);
-        print_r("\r\n");
-        
+
         $header = $helper->generateHeaderAccessToken($x_time_stamp, $client_id, $signature);
-        print_r($header);
-        print_r("\r\n");
 
         try {
             $response = Http::withHeaders($header)->post($this->base_url, $bd);
-        } catch (\Throwable $th) {
-            // throw $th;
 
+            if ($response->successful()) {
+                $access_token = $response->json()['accessToken'];
+
+                // Return the access token only
+                return $access_token;
+            }
+
+            // Handle unsuccessful response
             return response()->json([
                 'status' => $response->status(),
-                'message' => $response->successful(),
-                'data' => $response->json()
+                'message' => $response->json()['message'] ?? 'Failed to generate access token',
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Internal Server Error',
+                'error' => $th->getMessage()
             ]);
         }
-
-        return response()->json([
-            'status' => $response->status(),
-            'message' => $response->successful(),
-            'data' => $response->json()
-        ]);
     }
 }
+

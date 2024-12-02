@@ -7,20 +7,18 @@ use Illuminate\Support\Str;
 
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 
 class InquiryBalancePayoutController extends Controller
 {
 
-    protected $partner_id = ""; //String partner id / merchantId
+    protected $partner_id ; //String partner id / merchantId
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_balance_inquiry = "/api/v1.0/transfer/balance-inquiry";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string credential
-    PROTECTED $access_token = ""; // String access token
-    PROTECTED $store_id = "";
+    PROTECTED $key ;
+    PROTECTED $client_secret ; // string credential
+    PROTECTED $access_token ; // String access token
+    PROTECTED $store_id = "NICEPAY";
 
     // for amount
     PROTECTED $amt = "100.00";
@@ -35,9 +33,13 @@ class InquiryBalancePayoutController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->partner_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
         /**

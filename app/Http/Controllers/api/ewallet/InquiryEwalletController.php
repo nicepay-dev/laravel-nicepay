@@ -8,20 +8,18 @@ use Illuminate\Support\Str;
 
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 
 class InquiryEwalletController extends Controller
 {
 
-    protected $partner_id = "";
+    protected $partner_id ;
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_inquiry = "/api/v1.0/debit/status";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string client secret
-    PROTECTED $access_token = ""; // string access token
-    PROTECTED $store_id = "";
+    PROTECTED $key ;
+    PROTECTED $client_secret ; // string client secret
+    PROTECTED $access_token ; // string access token
+    PROTECTED $store_id = "249668074512960";
 
     // for amount
     PROTECTED $amt = "100.00";
@@ -36,9 +34,13 @@ class InquiryEwalletController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->partner_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
     /**
@@ -60,8 +62,8 @@ class InquiryEwalletController extends Controller
         $store_id = $this->store_id;
 
         $external_id = "MrEwTst" . $time_stamp . Str::random(5);
-        $original_reference_no = "TNICEEW05105202408081348437590";
-        $reference_no = "refNoEw20240808134839IXL1X";
+        $original_reference_no = "IONPAYTEST05202412021541187352";
+        $reference_no = "refNoEw20241202154119WuYGR";
         
         $amount = [
             "value" => "11.00",
@@ -101,7 +103,7 @@ class InquiryEwalletController extends Controller
                 $signature, 
                 $partner_id, 
                 $external_id,
-                $partner_id . "08"
+                'IONPAYTEST01'
             );
         print_r($string_to_sign); 
         
@@ -112,6 +114,11 @@ class InquiryEwalletController extends Controller
 
         try {
             $response = Http::withHeaders($header)->post($this->domain . $this->end_point_inquiry, $body);
+            $data = [
+                "data" => $response->json()
+            ];
+
+
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -126,7 +133,7 @@ class InquiryEwalletController extends Controller
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $response->object()
+            'data' => $data
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
         
     }

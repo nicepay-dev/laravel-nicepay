@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+use Illuminate\Support\Facades\Http;
+
 use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 use App\Http\Controllers\api\va\GenerateVirtualAccountController;
 use App\Http\Controllers\api\va\DeleteVirtualAccountController;
@@ -45,7 +48,7 @@ Route::get('/delete-virtual-account', [DeleteVirtualAccountController::class, 'd
 
 
 //E-Wallet
-Route::get('/payment-host-to-host', [GenerateEwalletController::class, 'generateEwallet']);
+Route::get('/generate-ewallet', [GenerateEwalletController::class, 'generateEwallet']);
 Route::get('/status-ewallet', [InquiryEwalletController::class, 'inquiryEwallet']);
 Route::get('/refund-ewallet', [RefundEwalletController::class, 'refundEwallet']);
 

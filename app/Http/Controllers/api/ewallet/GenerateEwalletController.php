@@ -8,19 +8,17 @@ use Illuminate\Support\Str;
 
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 
 class GenerateEwalletController extends Controller
 {
-    protected $partner_id = "";
+    protected $partner_id;
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_generate = "/api/v1.0/debit/payment-host-to-host";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string client secret
-    PROTECTED $access_token = ""; // string access token
-    PROTECTED $store_id = "";
+    PROTECTED $key;
+    PROTECTED $client_secret; // string client secret
+    PROTECTED $access_token; // string access token
+    PROTECTED $store_id = "249668074512960";
 
     // for amount
     PROTECTED $amt = "100.00";
@@ -35,9 +33,13 @@ class GenerateEwalletController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->partner_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
     /**
@@ -106,7 +108,7 @@ class GenerateEwalletController extends Controller
             "mitraCd" => "OVOE",
             "goodsNm" => "Merchant Goods 1",
             "billingNm" => "SNAP Ewallet",
-            "billingPhone" => "08123456789",
+            "billingPhone" => "081291444983",
             "dbProcessUrl" => "https://ptsv2.com/t/jhon/post",
             "callBackUrl"=> "https://ptsv2.com/t/jhon/post",
             "cartData" => json_encode($cartData)
@@ -157,7 +159,7 @@ class GenerateEwalletController extends Controller
                 $signature, 
                 $partner_id, 
                 $external_id,
-                $partner_id . "08"
+                'IONPAYTEST01'
             );
         print_r($string_to_sign); 
         
@@ -170,9 +172,10 @@ class GenerateEwalletController extends Controller
 
         try {
             $response = Http::withHeaders($header)->post($this->domain . $this->end_point_generate, $body);
-
+            $data = [
+                "data" => $response->json()
+            ];
             
-            $obj_response = $response->object();
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -187,7 +190,7 @@ class GenerateEwalletController extends Controller
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $response->object()
+            'data' => $data
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
     }
 

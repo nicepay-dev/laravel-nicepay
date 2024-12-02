@@ -8,31 +8,31 @@ use Illuminate\Support\Str;
 
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
-
-use Illuminate\Http\Response;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController; 
 
 class DeleteVirtualAccountController extends Controller
 {
 
-    protected $client_id = "";
+    protected $client_id;
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point = "/api/v1.0/transfer-va/delete-va";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
+    PROTECTED $key;
     
-    PROTECTED $client_secret = ""; // string CLIENT SECRET
-    PROTECTED $access_token = "";
+    PROTECTED $client_secret;
+    PROTECTED $access_token;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->client_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
     /**
@@ -49,7 +49,7 @@ class DeleteVirtualAccountController extends Controller
         $date = Carbon::now();
         $x_time_stamp = $date->toIso8601String();
         $time_stamp = $date->format("YmdHis");
-        $partner_id = ""; //String partner id / merchantId
+        $partner_id = $this->client_id; //String partner id / merchantId
         $client_secret = $this->client_secret;
 
         $access_token = $this->access_token;
@@ -63,23 +63,23 @@ class DeleteVirtualAccountController extends Controller
 
         $additionalInfo = [
             "totalAmount" => $totalAmount,
-            "tXidVA" => "TNICEVA02302202408021409400767",
+            "tXidVA" => "TNICEVA02302202412021355361953",
             "cancelMessage" => "Cancel Virtual Account"            
         ];
         
-        $body = [
-            "partnerServiceId" => "1234567",
-            "customerNo" => "",
-            "virtualAccountNo" => "9912304000008867",
-            "trxId" => "trxIdVa20240802140941",
-            "additionalInfo" => $additionalInfo,
-        ];
+        // $body = [
+        //     "partnerServiceId" => "1234567",
+        //     "customerNo" => "",
+        //     "virtualAccountNo" => "9912304000062540",
+        //     "trxId" => "trxIdVa20241118162517",
+        //     "additionalInfo" => $additionalInfo,
+        // ];
 
         $bodyModel = [
             "partnerServiceId" => "",
             "customerNo" => "",
-            "virtualAccountNo" => "9912304000008867",
-            "trxId" => "trxIdVa20240802140941",
+            "virtualAccountNo" => "9912304000062666",
+            "trxId" => "trxIdVa20241202135537",
             "additionalInfo" => $additionalInfo,
             ];
 
@@ -111,12 +111,12 @@ class DeleteVirtualAccountController extends Controller
     print_r("\r\n");
     
     print_r($header);
-    print_r($body);
+    // print_r($body);
 
     try {
         $response = Http::withHeaders($header)->delete($this->domain . $this->end_point, $bodyModel);
 
-        dd($header, $bodyModel, $response->json());
+
 
     } catch (\Throwable $th) {
         throw $th;

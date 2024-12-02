@@ -8,18 +8,17 @@ use Illuminate\Support\Str;
 
 use App\Models\Helper\Helpers;
 use Carbon\Carbon;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController; 
+
 
 class InquiryQrisController extends Controller{
 
-    protected $partner_id = "";
+    protected $partner_id;
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point_inquiry = "/api/v1.0/qr/qr-mpm-query";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
-    PROTECTED $client_secret = ""; // string credential
-    PROTECTED $access_token = "";
+    PROTECTED $key ;
+    PROTECTED $client_secret; // string credential
+    PROTECTED $access_token;
     PROTECTED $store_id = "NICEPAY";
 
     // for amount
@@ -35,9 +34,13 @@ class InquiryQrisController extends Controller{
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->partner_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
     /**
@@ -59,8 +62,8 @@ class InquiryQrisController extends Controller{
         $store_id = $this->store_id;
 
         $external_id = "MrQrTst" . $time_stamp . Str::random(5);
-        $original_reference_no = "TNICEQR08108202408121527382996";
-        $reference_no = "refNoQr20240812152742rhfmL";
+        $original_reference_no = "IONPAYTEST08202411210631439601";
+        $reference_no = "refNoQr20241121063143e0yIG";
         
         $additionalInfo = new \stdClass();
 
@@ -104,6 +107,10 @@ class InquiryQrisController extends Controller{
 
         try {
             $response = Http::withHeaders($header)->post($this->domain . $this->end_point_inquiry, $body);
+            $data = [
+                "data" => $response->json()
+            ];
+
         } catch (\Throwable $th) {
             throw $th;
             // print_r($th);
@@ -118,7 +125,7 @@ class InquiryQrisController extends Controller{
         return response()->json([
             'status' => $response->status(),
             'message' => $response->successful(),
-            'data' => $response->object()
+            'data' => $data
         ])->setEncodingOptions(JSON_UNESCAPED_SLASHES);
     }
 

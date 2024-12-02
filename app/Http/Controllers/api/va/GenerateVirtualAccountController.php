@@ -9,30 +9,32 @@ use Illuminate\Support\Str;
 use App\Models\Helper\Helpers;
 use App\Models\va\RequestVA;
 use Carbon\Carbon;
+use App\Http\Controllers\api\accessToken\GenerateAccessTokenController; 
 
 
 class GenerateVirtualAccountController extends Controller
 {
 
-    protected $client_id = "";
+    protected $client_id;
     protected $domain = "https://dev.nicepay.co.id/nicepay";
     protected $end_point = "/api/v1.0/transfer-va/create-va";
-    PROTECTED $key = "-----BEGIN RSA PRIVATE KEY-----" . "\r\n" .
-    "" . // string private key
-    "\r\n" .
-    "-----END RSA PRIVATE KEY-----";
+    PROTECTED $key;
     
-    PROTECTED $client_secret = ""; // string CLIENT SECRET
-    PROTECTED $access_token = "";
+    PROTECTED $client_secret; 
+    PROTECTED $access_token;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(GenerateAccessTokenController $accessTokenController)
     {
-
+        $this->key = env('RSA_PRIVATE_KEY');
+        $this->client_id = env('CLIENT_ID');
+        $this->client_secret = env('CLIENT_SECRET');
+        // Automatically fetch a new access token
+        $this->access_token = $accessTokenController->generateAccessToken();
     }
 
     /**
@@ -123,11 +125,15 @@ class GenerateVirtualAccountController extends Controller
         print_r($body);
 
 
+
+
         try {
             $response = Http::withHeaders($header)->post($this->domain . $this->end_point, $bodyModel);
 
+            // dd($header, $bodyModel, $response->json());
+
             $data = [
-                "data" => $response
+                "data" => $response->json()
             ];
         } catch (\Throwable $th) {
             throw $th;
