@@ -32,7 +32,7 @@ class PaymentCreditCardController extends Controller
     }
 
     /**
-     * generate virtual account direct
+     * Generate payment credit card direct
      * 
      * @return json
      */

@@ -32,7 +32,7 @@ class InquiryStatusCreditCardController extends Controller
     }
 
     /**
-     * inquiry virtual account direct
+     * inquiry status credit card direct
      * 
      * @return json
      */
