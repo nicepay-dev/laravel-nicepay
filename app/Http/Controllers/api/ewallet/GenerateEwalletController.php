@@ -18,7 +18,7 @@ class GenerateEwalletController extends Controller
     PROTECTED $key;
     PROTECTED $client_secret; // string client secret
     PROTECTED $access_token; // string access token
-    PROTECTED $store_id = "249668074512960";
+    PROTECTED $store_id = "216660000000833315280";
 
     // for amount
     PROTECTED $amt = "100.00";
@@ -105,7 +105,7 @@ class GenerateEwalletController extends Controller
         ]; 
             
         $additionalInfo = [
-            "mitraCd" => "OVOE",
+            "mitraCd" => "DANA",
             "goodsNm" => "Merchant Goods 1",
             "billingNm" => "SNAP Ewallet",
             "billingPhone" => "081291444983",
