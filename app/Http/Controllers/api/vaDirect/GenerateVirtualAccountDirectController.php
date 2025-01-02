@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\vaDirect;
+// namespace App\Http\Controllers\api\vaDirect;
 namespace Nicepay\NicepayLaravel\Http\Controllers\api\vaDirect;
 
 use App\Http\Controllers\Controller;
