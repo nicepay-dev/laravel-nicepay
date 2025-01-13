@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\api\payout;
+// namespace App\Http\Controllers\api\payout;
+namespace Nicepay\NicepayLaravel\Http\Controllers\api\payout;
+
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
-use App\Models\Helper\Helpers;
+// use App\Models\Helper\Helpers;
+use Nicepay\NicepayLaravel\Models\Helper\Helpers;
 use Carbon\Carbon;
-use App\Http\Controllers\api\accessToken\GenerateAccessTokenController; 
+// use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\accessToken\GenerateAccessTokenController; 
 
 
 class GeneratePayoutController extends Controller

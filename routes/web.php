@@ -4,35 +4,64 @@ use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Http;
 
-use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
-
-use App\Http\Controllers\api\va\GenerateVirtualAccountController;
-use App\Http\Controllers\api\va\InquiryVirtualAccountController;
-use App\Http\Controllers\api\va\DeleteVirtualAccountController;
+// use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
+// use App\Http\Controllers\api\accessToken\GenerateAccessTokenController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\accessToken\GenerateAccessTokenController;
 
 
-use App\Http\Controllers\api\vaDirect\GenerateVirtualAccountDirectController;
-use App\Http\Controllers\api\vaDirect\InquiryStatusVirtualAccountDirectController;
-use App\Http\Controllers\api\vaDirect\CancelVirtualAccountDirectController;
+// use App\Http\Controllers\api\va\GenerateVirtualAccountController;
+// use App\Http\Controllers\api\va\InquiryVirtualAccountController;
+// use App\Http\Controllers\api\va\DeleteVirtualAccountController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\va\GenerateVirtualAccountController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\va\InquiryVirtualAccountController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\va\DeleteVirtualAccountController;
 
-use App\Http\Controllers\api\ccDirect\GenerateCreditCardController;
-use App\Http\Controllers\api\ccDirect\PaymentCreditCardController;
-use App\Http\Controllers\api\ccDirect\InquiryStatusCreditCardController;
+// use App\Http\Controllers\api\vaDirect\GenerateVirtualAccountDirectController;
+// use App\Http\Controllers\api\vaDirect\InquiryStatusVirtualAccountDirectController;
+// use App\Http\Controllers\api\vaDirect\CancelVirtualAccountDirectController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\vaDirect\GenerateVirtualAccountDirectController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\vaDirect\InquiryStatusVirtualAccountDirectController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\vaDirect\CancelVirtualAccountDirectController;
 
-use App\Http\Controllers\api\ewallet\GenerateEwalletController;
-use App\Http\Controllers\api\ewallet\InquiryEwalletController;
-use App\Http\Controllers\api\ewallet\RefundEwalletController;
+// use App\Http\Controllers\api\ccDirect\GenerateCreditCardController;
+// use App\Http\Controllers\api\ccDirect\PaymentCreditCardController;
+// use App\Http\Controllers\api\ccDirect\InquiryStatusCreditCardController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ccDirect\GenerateCreditCardController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ccDirect\PaymentCreditCardController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ccDirect\InquiryStatusCreditCardController;
 
-use App\Http\Controllers\api\qris\GenerateQrisController;
-use App\Http\Controllers\api\qris\InquiryQrisController;
-use App\Http\Controllers\api\qris\RefundQrisController;
 
-use App\Http\Controllers\api\payout\GeneratePayoutController;
-use App\Http\Controllers\api\payout\ApprovePayoutController;
-use App\Http\Controllers\api\payout\InquiryBalancePayoutController;
-use App\Http\Controllers\api\payout\InquiryPayoutController;
-use App\Http\Controllers\api\payout\RejectPayoutController;
-use App\Http\Controllers\api\payout\CancelPayoutController;
+// use App\Http\Controllers\api\ewallet\GenerateEwalletController;
+// use App\Http\Controllers\api\ewallet\InquiryEwalletController;
+// use App\Http\Controllers\api\ewallet\RefundEwalletController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ewallet\GenerateEwalletController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ccDirect\InquiryEwalletController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\ewallet\RefundEwalletController;
+
+
+// use App\Http\Controllers\api\qris\GenerateQrisController;
+// use App\Http\Controllers\api\qris\InquiryQrisController;
+// use App\Http\Controllers\api\qris\RefundQrisController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\qris\GenerateQrisController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\qris\InquiryQrisController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\qris\RefundQrisController;
+
+
+
+// use App\Http\Controllers\api\payout\GeneratePayoutController;
+// use App\Http\Controllers\api\payout\ApprovePayoutController;
+// use App\Http\Controllers\api\payout\InquiryBalancePayoutController;
+// use App\Http\Controllers\api\payout\InquiryPayoutController;
+// use App\Http\Controllers\api\payout\RejectPayoutController;
+// use App\Http\Controllers\api\payout\CancelPayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\GeneratePayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\ApprovePayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\InquiryBalancePayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\InquiryPayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\RejectPayoutController;
+use Nicepay\NicepayLaravel\Http\Controllers\api\payout\CancelPayoutController;
+
+
 
 /*
 |--------------------------------------------------------------------------

@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\api\accessToken;
+// namespace App\Http\Controllers\api\accessToken;
+namespace Nicepay\NicepayLaravel\Http\Controllers\api\accessToken;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use App\Models\Helper\Helpers;
+// use App\Models\Helper\Helpers;
+use Nicepay\NicepayLaravel\Models\Helper\Helpers;
 use Carbon\Carbon;
 
 class GenerateAccessTokenController extends Controller
@@ -53,6 +55,8 @@ class GenerateAccessTokenController extends Controller
 
         try {
             $response = Http::withHeaders($header)->post($this->base_url, $bd);
+
+            dd($response);
 
             if ($response->successful()) {
                 $access_token = $response->json()['accessToken'];

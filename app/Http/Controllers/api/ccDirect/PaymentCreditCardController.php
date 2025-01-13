@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\api\ccDirect;
+// namespace App\Http\Controllers\api\ccDirect;
+namespace Nicepay\NicepayLaravel\Http\Controllers\api\ccDirect;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Models\Helper\Helpers;
-use App\Models\va\RequestVA;
 use Carbon\Carbon;
 
 
